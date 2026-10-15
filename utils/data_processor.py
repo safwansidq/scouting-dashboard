@@ -32,6 +32,13 @@ def add_per90_stats(df):
     return df
 
 #calculate percentiles within each position
+def add_percentililes(df):
+    '''this function calculates the percentiles for the per-90 stats'''
+    df = df.copy()
+    df['npxG_per90_pct'] = df.groupby('PrimaryPos')['npxG_per90'].rank(pct=True) * 100
+    df['xA_per90_pct'] = df.groupby('PrimaryPos')['xA_per90'].rank(pct=True) * 100
+    df['PrgP_per90_pct'] = df.groupby('PrimaryPos')['PrgP_per90'].rank(pct=True) * 100
+    return df
 
 #calculate the weighted score
 
@@ -49,4 +56,9 @@ if __name__ == "__main__":
     print(df.shape)
     df = add_per90_stats(df)
     print(df['npxG_per90'].mean().round(2)) 
+    df = add_percentililes(df)
+    mini = df[['Player', 'PrimaryPos', 'npxG_per90_pct']]
+    mini = mini.sort_values(by='npxG_per90_pct', ascending=False)
+    mini = mini[mini['PrimaryPos'] == 'FW']
+    print(mini.head(10))
 
