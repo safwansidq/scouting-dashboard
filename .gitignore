@@ -1,0 +1,9 @@
+#Virtual Environment so anyone can rebuild it from requirements.txt
+.venv/
+
+#Python's automatic cache files
+__pycache__/
+*.pyc 
+
+#macOS clutter
+.DS_Store
