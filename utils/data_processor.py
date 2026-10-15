@@ -23,6 +23,13 @@ def filter_players(df):
     return filtered_df
 
 #calculate per-90 stats
+def add_per90_stats(df):
+    '''this function converts the metrics into per-90 stats'''
+    df = df.copy()
+    df['npxG_per90'] = (df['npxG'] / df['Min']) * 90  #npxG per 90 minutes
+    df['xA_per90'] = (df['xA'] / df['Min']) * 90  #xA per 90 minutes
+    df['PrgP_per90'] = (df['PrgP'] / df['Min']) * 90  #PrgP per 90 minutes
+    return df
 
 #calculate percentiles within each position
 
@@ -40,4 +47,6 @@ if __name__ == "__main__":
     print(df['PrimaryPos'].value_counts())
     df = filter_players(df)
     print(df.shape)
+    df = add_per90_stats(df)
+    print(df['npxG_per90'].mean().round(2)) 
 
