@@ -16,6 +16,11 @@ def add_primary_position(df):
     return df
 
 #apply your filter (15 appearances and 900 minutes)
+def filter_players(df):
+    '''this function filters the players based on the number of appearances and minutes played'''
+    df = df.copy()
+    filtered_df = df[(df['MP'] >= 15) & (df['Min'] >= 900)]
+    return filtered_df
 
 #calculate per-90 stats
 
@@ -33,4 +38,6 @@ if __name__ == "__main__":
     print(df.shape)
     df = add_primary_position(df)
     print(df['PrimaryPos'].value_counts())
+    df = filter_players(df)
+    print(df.shape)
 
