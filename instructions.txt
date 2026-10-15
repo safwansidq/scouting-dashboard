@@ -1,0 +1,80 @@
+# Project Blueprint: Interactive Scouting & Performance Dashboard
+
+## 1. Project Overview & Goal
+Build an interactive web application using Python, Streamlit, and Plotly to scout and analyze football players across top European leagues. The app will process raw underlying player performance data, compute per-90 normalized metrics, generate percentile rankings, and display interactive visual tools like scatter quadrant charts and dual-player radar comparisons.
+
+## 2. Tech Stack & Dependencies
+* Language: Python 3.10+
+* Dashboard Framework: streamlit
+* Data Processing: pandas, numpy
+* Data Visualization: plotly (express and graph_objects)
+* Data Source: Open-source top-5 European leagues player dataset (e.g., FBref or Understat metrics in .csv format)
+
+---
+
+## 3. Directory & File Architecture
+
+scouting_dashboard/
+│── data/
+│   └── top5_leagues_player_stats.csv   # Raw statistics dataset
+│── utils/
+│   ├── data_processor.py               # Data cleaning, per-90 formulas, percentiles
+│   └── visualizer.py                   # Plotly charts (scatter plots, radar plots)
+│── app.py                              # Main Streamlit application interface
+│── requirements.txt                    # Project dependencies
+└── .cursorrules                        # Context & behavior rules for Cursor
+
+---
+
+## 4. Key Functional Requirements
+
+1. Dynamic Data Filtering:
+   * Global sidebar with filters for League, Squad, Primary Position (FW, MF, DF), Age Range, and Minimum Minutes Played (e.g., >500 minutes to remove noise).
+
+2. Per-90 Normalization Engine:
+   * Automatically transform raw totals into rate metrics:
+     Metric_per90 = (Stat Total / Minutes Played) * 90
+
+3. Dual-Metric Scatter Matrix (Quadrant Plot):
+   * Allow users to select any two metrics for X and Y axes (e.g., Progressive Passes per 90 vs. Tackles + Interceptions per 90).
+   * Interactive plot with hover details (Player Name, Squad, Age, League).
+   * Average / Median baseline grid lines dividing the chart into four tactical quadrants (e.g., "High Volume / High Efficiency").
+
+4. Player Percentile & Radar Profiling:
+   * Calculate percentile ranks (0-100%) for stats relative to a player's positional cohort.
+   * Render a 360-degree polar radar chart showcasing key attributes (Passing, Chance Creation, Defense, Ball Carrying).
+
+5. Head-to-Head Comparison View:
+   * Select Player A and Player B to view side-by-side metric cards and overlaid radar charts comparing their profiles directly.
+
+---
+
+## 5. Phased Implementation Roadmap
+
+* Phase 1: Environment & Data Pipeline
+  * Initialize project directory, set up requirements.txt, and create virtual environment.
+  * Build utils/data_processor.py to ingest the dataset, handle missing values, filter out low-minute players, and generate per-90 columns.
+
+* Phase 2: Streamlit Shell & Sidebar Filters
+  * Set up app.py with a wide layout and titles.
+  * Implement dynamic sidebar inputs (multiselect dropdowns, sliders) that filter the main Pandas DataFrame in real time.
+
+* Phase 3: Interactive Scatter Plot Module
+  * Build utils/visualizer.py function for Plotly scatter plots.
+  * Integrate scatter plot into app.py with drop-down selectors for X/Y variables and mean reference lines.
+
+* Phase 4: Percentile Calculations & Radar Charts
+  * Implement positional percentile calculation logic in data_processor.py.
+  * Build custom Plotly Scatterpolar radar charts for single player attributes.
+
+* Phase 5: Head-to-Head Comparison Tab
+  * Implement Streamlit tabs (st.tabs(["Overview", "Scatter Analysis", "Player Comparison"])).
+  * Add dual-player selection inputs and render overlaid radar plots for direct scouting comparisons.
+
+---
+
+## 6. Execution Rules for Cursor AI
+1. One Step at a Time: Work strictly within the current phase. Do not write code for future phases until the current phase is tested and verified.
+2. Pseudocode First: Before writing code in any file, write out English block comments outlining the logic.
+3. Inline Explanations: Include clear comments (# like this) explaining what key Pandas or Plotly syntax is doing.
+4. Sanity Checks: Include simple print() or st.write() verification statements to check data shapes after transformations.
