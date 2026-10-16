@@ -2,6 +2,12 @@
 import pandas as pd 
 
 DATA_PATH = "data/players_data-2024_2025.csv"
+WEIGHTS = {
+    'FW': {'npxG_per90_pct': 0.5, 'xA_per90_pct': 0.3, 'PrgP_per90_pct': 0.2},
+    'MF': {'npxG_per90_pct': 0.2, 'xA_per90_pct': 0.3, 'PrgP_per90_pct': 0.5},
+    'DF': {'npxG_per90_pct': 0.15, 'xA_per90_pct': 0.15, 'PrgP_per90_pct': 0.7},
+    'GK': {'npxG_per90_pct': 0.2, 'xA_per90_pct': 0.2, 'PrgP_per90_pct': 0.6}
+}
 
 def load_data(path):
     '''this function loads the data from the csv file'''
@@ -41,24 +47,57 @@ def add_percentililes(df):
     return df
 
 #calculate the weighted score
+def overall_score(df):
+    '''this function calculates the overall score for the players'''
+    df = df.copy()
+    df['overall_score'] = 0.0
+    FW = df['PrimaryPos'] == 'FW'
+    MF = df['PrimaryPos'] == 'MF'
+    DF = df['PrimaryPos'] == 'DF'
+    GK = df['PrimaryPos'] == 'GK'
+
+    df.loc[FW, 'overall_score'] = (
+        df.loc[FW, 'npxG_per90_pct'] * WEIGHTS['FW']['npxG_per90_pct'] +
+        df.loc[FW, 'xA_per90_pct'] * WEIGHTS['FW']['xA_per90_pct'] +
+        df.loc[FW, 'PrgP_per90_pct'] * WEIGHTS['FW']['PrgP_per90_pct']
+    )
+    df.loc[MF, 'overall_score'] = (
+        df.loc[MF, 'npxG_per90_pct'] * WEIGHTS['MF']['npxG_per90_pct'] +
+        df.loc[MF, 'xA_per90_pct'] * WEIGHTS['MF']['xA_per90_pct'] +
+        df.loc[MF, 'PrgP_per90_pct'] * WEIGHTS['MF']['PrgP_per90_pct']
+    )
+    df.loc[DF, 'overall_score'] = (
+        df.loc[DF, 'npxG_per90_pct'] * WEIGHTS['DF']['npxG_per90_pct'] +
+        df.loc[DF, 'xA_per90_pct'] * WEIGHTS['DF']['xA_per90_pct'] +
+        df.loc[DF, 'PrgP_per90_pct'] * WEIGHTS['DF']['PrgP_per90_pct']
+    )
+    df.loc[GK, 'overall_score'] = (
+        df.loc[GK, 'npxG_per90_pct'] * WEIGHTS['GK']['npxG_per90_pct'] +
+        df.loc[GK, 'xA_per90_pct'] * WEIGHTS['GK']['xA_per90_pct'] +
+        df.loc[GK, 'PrgP_per90_pct'] * WEIGHTS['GK']['PrgP_per90_pct']
+    )
+    return df
 
 #turn the score into an overall percentile
+def overall_percentile(df):
+    '''this function turns the score into an overall percentile'''
+    df = df.copy()
+    df['overall_percentile'] = df.groupby('PrimaryPos')['overall_score'].rank(pct = True) * 100
+    return df
 
-
-
-if __name__ == "__main__":
-    df = load_data(DATA_PATH)
-    print(df['Comp'].nunique())
-    print(df.shape)
+def prepare_report(path = DATA_PATH):
+    df = load_data(path)
     df = add_primary_position(df)
-    print(df['PrimaryPos'].value_counts())
     df = filter_players(df)
-    print(df.shape)
     df = add_per90_stats(df)
-    print(df['npxG_per90'].mean().round(2)) 
     df = add_percentililes(df)
-    mini = df[['Player', 'PrimaryPos', 'npxG_per90_pct']]
-    mini = mini.sort_values(by='npxG_per90_pct', ascending=False)
+    df = overall_score(df)
+    df = overall_percentile(df)
+    return df
+if __name__ == "__main__":
+    df = prepare_report()
+    print(df.head(10))
+    mini = df[['Player', 'PrimaryPos', 'overall_percentile']]
+    mini = mini.sort_values(by='overall_percentile', ascending=False)
     mini = mini[mini['PrimaryPos'] == 'FW']
     print(mini.head(10))
-
