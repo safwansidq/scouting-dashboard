@@ -87,7 +87,19 @@ sorted_df = filtered_df.sort_values(by = 'overall_percentile', ascending = False
 page_df = sorted_df.iloc[start:end]
 
 #working code
-mini = page_df[['Player', 'Squad', 'PrimaryPos', 'overall_percentile']]
+mini = page_df[['Player', 'Squad', 'PrimaryPos', 'Age', 'Min', 'npxG_per90', 'xA_per90', 'PrgP_per90', 'overall_percentile']]
+
+#renaming the columns to make it more readable
+mini = mini.rename(columns={
+    'Squad': 'Club',
+    'PrimaryPos': 'Position',
+    'Min': 'Minutes',
+    'npxG_per90': 'Non Penalty xG per 90',
+    'xA_per90': 'xA per 90',
+    'PrgP_per90': 'Progressive Passes per 90',
+    'overall_percentile': 'Overall Percentile'
+})
+mini = mini.round(2)
 st.title('Filtered Team')
 st.write('players matched: ', len(filtered_df))
 st.write(mini)
