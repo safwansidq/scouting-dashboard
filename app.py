@@ -16,12 +16,23 @@ filtered_df = df
 st.sidebar.header('Filters')
 leagues = sorted(df['Comp'].dropna().unique())
 positions = sorted(df['PrimaryPos'].dropna().unique())
+
+#search bar to find players names
+chosen_player = st.sidebar.text_input('Player name', on_change=reset_page)
+if chosen_player:
+    mask = filtered_df['Player'].str.contains(
+        chosen_player,
+        case=False,
+        na = False,
+        regex=False
+        )
+    filtered_df = filtered_df[mask]
         
 
 #multiselect for leagues
 chosen_league = st.sidebar.multiselect('League', options = leagues, default = [], on_change=reset_page)
 if chosen_league:
-    filtered_df = df[df['Comp'].isin(chosen_league)]
+    filtered_df = filtered_df[filtered_df['Comp'].isin(chosen_league)]
 
 #multiselect for Teams
 teams = sorted(filtered_df['Squad'].dropna().unique())
