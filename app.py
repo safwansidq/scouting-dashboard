@@ -102,7 +102,7 @@ mini = mini.rename(columns={
 mini = mini.round(2)
 st.title('Filtered Team')
 st.write('players matched: ', len(filtered_df))
-st.write(mini)
+st.dataframe(mini, hide_index=True)
 
 st.write(f'Page: {st.session_state.page + 1} out of {total_pages}')
 
